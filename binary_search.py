@@ -27,6 +27,19 @@ def find_smallest_positive(xs):
     True
     '''
 
+    def _smallest_positive_helper(xs, x, y):
+        if x > y:
+            return None
+        mid_point = (x + y) // 2
+        if xs[mid_point] > 0 and (mid_point == 0 or xs[mid_point-1] <= 0):
+            return mid_point
+        elif xs[mid_point] <= 0:
+            return _smallest_positive_helper(xs, mid_point+1, y)
+        else:
+            return _smallest_positive_helper(xs, x, mid_point-1)
+
+    return _smallest_positive_helper(xs, 0, len(xs)-1)
+
 
 def count_repeats(xs, x):
     '''
@@ -43,15 +56,54 @@ def count_repeats(xs, x):
     and write your own doctests for these functions.
     Then, once you're sure these functions work independently,
     completing step 3 will be easy.
-
-    APPLICATION:
-    This is a classic question for technical interviews.
-
     >>> count_repeats([5, 4, 3, 3, 3, 3, 3, 3, 3, 2, 1], 3)
     7
     >>> count_repeats([3, 2, 1], 4)
     0
-    '''
+    ''' 
+    def _find_first_half(bottom, top):
+        '''Returns the index of the first occurance of x in xs, if x not in xs returns -1'''
+        while bottom <= top:
+            # find the middle index
+            middle = (bottom + top) // 2
+            # if middle is less than x move to bottom half
+            if xs[middle] < x: 
+                # if middle is greater than x move to top half
+                top = middle - 1
+            elif xs[middle] > x: 
+                bottom = middle + 1
+            else:
+                # if middle is x return middle
+                if middle == 0 or xs[middle-1] != x: 
+                    return middle
+                # keep searching bottom for x
+                else:
+                    top = middle - 1
+        # x not found
+        return -1 
+
+    def _find_last_half(bottom, top):
+        '''Returns the index of the last occurance of x in xs, if x not in xs returns -1'''
+        while bottom <= top:
+            middle = (bottom + top) // 2
+            if xs[middle] < x:
+                top = middle - 1
+            elif xs[middle] > x:
+                bottom = middle + 1
+            else:
+                if middle == len(xs)-1 or xs[middle+1] != x:
+                    return middle
+                # keep searching top for x
+                else:
+                    bottom = middle + 1
+        return -1
+    # find first and last occurances of x
+    first = _find_first_half(0, len(xs)-1)
+    # if x not in xs return 0
+    if first == -1:
+        return 0
+    last = _find_last_half(0, len(xs)-1)
+    return last - first + 1
 
 
 def argmin(f, lo, hi, epsilon=1e-3):
@@ -66,7 +118,7 @@ def argmin(f, lo, hi, epsilon=1e-3):
         2) For each recursive call:
             a) select two points m1 and m2 that are between lo and hi
             b) one of the 4 points (lo,m1,m2,hi) must be the smallest;
-               depending on which one is the smallest, 
+               depending on which one is the smallest,
                you recursively call your function on the interval [lo,m2] or [m1,hi]
 
     APPLICATION:
@@ -87,11 +139,15 @@ def argmin(f, lo, hi, epsilon=1e-3):
     >>> argmin(lambda x: (x-5)**2, -20, 0)
     -0.00016935087808430278
     '''
+    if hi - lo < epsilon:
+        return (lo + hi) / 2
+    m1 = lo + (hi - lo) / 3
+    m2 = hi - (hi - lo) / 3
+    if f(m1) < f(m2):
+        return argmin(f, lo, m2, epsilon)
+    else:
+        return argmin(f, m1, hi, epsilon)
 
-
-################################################################################
-# the functions below are extra credit
-################################################################################
 
 def find_boundaries(f):
     '''
