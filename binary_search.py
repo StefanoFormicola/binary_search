@@ -6,13 +6,13 @@ It's really easy to have off-by-1 errors in these problems.
 Pay very close attention to your list indexes and your < vs <= operators.
 '''
 
+
 def find_smallest_positive(xs):
     '''
     Assume that xs is a list of numbers sorted from LOWEST to HIGHEST.
     Find the index of the smallest positive number.
     If no such index exists, return `None`.
-
-    HINT: 
+    HINT:
     This is essentially the binary search algorithm from class,
     but you're always searching for 0.
 
@@ -31,14 +31,14 @@ def find_smallest_positive(xs):
         if x > y:
             return None
         mid_point = (x + y) // 2
-        if xs[mid_point] > 0 and (mid_point == 0 or xs[mid_point-1] <= 0):
+        if xs[mid_point] > 0 and (mid_point == 0 or xs[mid_point - 1] <= 0):
             return mid_point
         elif xs[mid_point] <= 0:
-            return _smallest_positive_helper(xs, mid_point+1, y)
+            return _smallest_positive_helper(xs, mid_point + 1, y)
         else:
-            return _smallest_positive_helper(xs, x, mid_point-1)
+            return _smallest_positive_helper(xs, x, mid_point - 1)
 
-    return _smallest_positive_helper(xs, 0, len(xs)-1)
+    return _smallest_positive_helper(xs, 0, len(xs) - 1)
 
 
 def count_repeats(xs, x):
@@ -47,7 +47,7 @@ def count_repeats(xs, x):
     and that x is a number.
     Calculate the number of times that x occurs in xs.
 
-    HINT: 
+    HINT:
     Use the following three step procedure:
         1) use binary search to find the lowest index with a value >= x
         2) use binary search to find the lowest index with a value < x
@@ -60,27 +60,27 @@ def count_repeats(xs, x):
     7
     >>> count_repeats([3, 2, 1], 4)
     0
-    ''' 
+    '''
     def _find_first_half(bottom, top):
         '''Returns the index of the first occurance of x in xs, if x not in xs returns -1'''
         while bottom <= top:
             # find the middle index
             middle = (bottom + top) // 2
             # if middle is less than x move to bottom half
-            if xs[middle] < x: 
+            if xs[middle] < x:
                 # if middle is greater than x move to top half
                 top = middle - 1
-            elif xs[middle] > x: 
+            elif xs[middle] > x:
                 bottom = middle + 1
             else:
                 # if middle is x return middle
-                if middle == 0 or xs[middle-1] != x: 
+                if middle == 0 or xs[middle - 1] != x:
                     return middle
                 # keep searching bottom for x
                 else:
                     top = middle - 1
         # x not found
-        return -1 
+        return -1
 
     def _find_last_half(bottom, top):
         '''Returns the index of the last occurance of x in xs, if x not in xs returns -1'''
@@ -91,18 +91,18 @@ def count_repeats(xs, x):
             elif xs[middle] > x:
                 bottom = middle + 1
             else:
-                if middle == len(xs)-1 or xs[middle+1] != x:
+                if middle == len(xs) - 1 or xs[middle + 1] != x:
                     return middle
                 # keep searching top for x
                 else:
                     bottom = middle + 1
         return -1
     # find first and last occurances of x
-    first = _find_first_half(0, len(xs)-1)
+    first = _find_first_half(0, len(xs) - 1)
     # if x not in xs return 0
     if first == -1:
         return 0
-    last = _find_last_half(0, len(xs)-1)
+    last = _find_last_half(0, len(xs) - 1)
     return last - first + 1
 
 
